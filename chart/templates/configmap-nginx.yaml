@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "suitecrm7.shortname" . }}-nginx-configs
+  labels:
+    {{- include "suitecrm7.labels" . | nindent 4 }}
+    component: deployment
+data:
+    default.conf: |-
+        server {  
+            listen 80;  
+            listen [::]:80;  
+            access_log on;
+            root /var/www/html;  
+            index index.php;  
+            server_name _;  
+
+            client_max_body_size 128M;
+            server_tokens off;  
+            location / {    
+                try_files $uri $uri/ /index.php?$args;
+            }
+        # pass the PHP scripts to FastCGI server within deployment (ie. localhost)
+        location ~ [^/]\.php(/|$)  {
+            fastcgi_split_path_info ^(.+\\.php)(/.+)$;
+            if (!-f $document_root$fastcgi_script_name) {
+                return 404;
+            }
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            # Mitigate https://httpoxy.org/ vulnerabilities
+            fastcgi_param HTTP_PROXY "";
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        }
+        }
+

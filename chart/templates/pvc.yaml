@@ -1,0 +1,28 @@
+{{ if .Values.persistence.enabled }}
+{{ range .Values.persistence.claims }}
+{{ if or ( ne .name "db") (and (eq .name "db") (eq $.Values.db.type "internal")) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "suitecrm7.shortname" $ }}-{{ .name }}
+  {{- if eq $.Values.persistence.resourcePolicy "keep" }}
+  annotations:
+    helm.sh/resource-policy: keep
+  {{- end }}
+spec:
+  accessModes: 
+    - {{ .accessMode }}
+  resources:
+    requests:
+      storage: {{ .size | default "10Gi" | quote }}
+  {{ if .storageClass }}
+  {{ if eq "-" .storageClass }}
+  storageClassName: ""
+  {{ else }}
+  storageClassName: {{ .storageClass }}
+  {{ end }}
+  {{ end }}
+{{ end }}
+---
+{{ end }}
+{{ end }}

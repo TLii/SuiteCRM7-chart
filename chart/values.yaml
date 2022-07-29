@@ -1,0 +1,178 @@
+# Default values for Unofficial SuiteCRM 7 chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+imagePullSecrets: []
+nameOverride:
+fullnameOverride:
+shortnameOverride:
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+suiteCRM:
+  siteName: SuiteCRM
+  siteUrl: "example.com" # Add correct site url.
+  enableDemoData: true # Any non-null value will cause demo data to be installed.
+  adminUsername: # If left null, a random username is used and printed to stdout. These are initial values; changing them after installation has no effect.
+  adminPassword: # If left null, a random password is used and printed to stdout.
+  config:
+    configLoc: /docker-configs
+    databaseCollation: utf8_general_ci 
+    databaseDropTables: 0 
+    databaseHostInstance: SQLEXPRESS 
+    databasePort: 3306 
+    databaseType: mysql 
+    databaseUserIsPrivileged: false 
+    databaseUseSsl: false 
+    defaultCurrencyIso4217: EUR 
+    defaultCurrencyName: Euro 
+    defaultCurrencySignificantDigits: 2
+    defaultCurrencySymbol: € 
+    defaultDateFormat: "d.m.y" 
+    defaultDecimalSeperator: "," 
+    defaultExportCharset: UTF-8 
+    defaultLanguage: en_US  
+    defaultLocaleNameFormat: "s f l" 
+    defaultNumberGroupingSeparator: " " 
+    defaultTimeFormat: "H:i" 
+    exportDelimiter: ',' 
+    hostname: localhost 
+    installDir: /suitecrm 
+    setupCreateDatabase: 0 
+    setupDemoData: false 
+
+php:
+  enabled: true # Required.
+  image: harbor.pilvity.online/suitecrm7/suitecrm7
+  tag: fpm-latest
+  imagePullPolicy: Always
+  securityContext: {}
+  # fsGroup: 2000
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+nginx:
+  enabled: true # If empty, nginx will not run
+  image: nginx
+  tag: alpine
+  imagePullPolicy: IfNotPresent
+  securityContext: {}
+    # fsGroup: 2000
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+db:
+  type: internal # Change to external if not using the attached MariaDB deployment
+  internal_db:
+    image: mariadb
+    tag: latest
+    imagePullPolicy: IfNotPresent
+    securityContext: {}
+      # fsGroup: 2000
+    name: suitecrm7
+    databaseUser: suitecrm
+    databasePassword: changeme
+    databaseName: suitecrm
+    databasePort: 3306
+    mariadbRootPassword: # If empty/false, a random one will be created and printed on stdout
+    mariadbAutoUpgrade: true # If false, mariadb won't update database automatically
+    resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  external_db:
+    databaseHost: localhost
+    databaseName: suitecrm 
+    databasePassword: thisshouldnotberealpassword
+    databasePort: 3306
+    databaseType: mysql
+    databaseUseSsl: false
+    databaseUser: suitecrm
+    databaseUserIsPrivileged: 
+    
+podAnnotations:
+  app: suitecrm7
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence: 
+  enabled: true # If null, data will not be persisted.
+  resourcePolicy: keep
+  claims: # DO NOT RENAME these unless you REALLY know what you are doing
+  - name: db # Volume will be created only if using internal mariadb
+    accessMode: ReadWriteMany
+    storageClass: ""
+    size: "5Gi"
+  - name: upload
+    accessMode: ReadWriteMany
+    size: "16Gi"
+    storageClass: ""
+  - name: wwwdata
+    accessMode: ReadWriteMany
+    size: "8Gi"
+    storageClass: ""
+  - name: config
+    accessMode: ReadWriteMany
+    size: "1Gi"
+    storageClass: ""
