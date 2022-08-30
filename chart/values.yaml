@@ -108,7 +108,7 @@ db:
     databaseType: mysql
     databaseUseSsl: false
     databaseUser: suitecrm
-    databaseUserIsPrivileged: 
+    databaseUserIsPrivileged: false
     
 podAnnotations:
   app: suitecrm7
