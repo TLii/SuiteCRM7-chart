@@ -28,27 +28,25 @@ data:
     SUITECRM_DATABASE_USER_IS_PRIVILEGED: {{ .Values.db.external_db.databaseUserIsPrivileged | quote }}
     SUITECRM_DATABASE_USER: {{ .Values.db.external_db.databaseUser | quote }}
     {{- else -}}
-      
-    {{- end -}}}}
     
-    SUITECRM_ADMIN_PASSWORD: changeme753
-    SUITECRM_ADMIN_USER: admin123
-    SUITECRM_CONFIG_LOC: /docker-configs
-    SUITECRM_DEFAULT_CURRENCY_ISO4217: EUR
-    SUITECRM_DEFAULT_CURRENCY_NAME: Euro
-    SUITECRM_DEFAULT_CURRENCY_SIGNIFICANT_DIGITS: 2: 
-    SUITECRM_DEFAULT_CURRENCY_SYMBOL: €
-    SUITECRM_DEFAULT_DATE_FORMAT: "d.m.y"
-    SUITECRM_DEFAULT_DECIMAL_SEPERATOR: ","
-    SUITECRM_DEFAULT_EXPORT_CHARSET: UTF-8
-    SUITECRM_DEFAULT_LANGUAGE: en_US 
-    SUITECRM_DEFAULT_LOCALE_NAME_FORMAT: "s f l"
-    SUITECRM_DEFAULT_NUMBER_GROUPING_SEPARATOR: " "
-    SUITECRM_DEFAULT_TIME_FORMAT: "H:i"
-    SUITECRM_EXPORT_DELIMITER: ','
-    SUITECRM_HOSTNAME: localhost
-    SUITECRM_INSTALL_DIR: /suitecrm
-    SUITECRM_SETUP_CREATE_DATABASE: 0
-    SUITECRM_SETUP_DEMO_DATA: false
-    SUITECRM_SITE_NAME: SuiteCRM
-    SUITECRM_SITE_URL: example.com
+    SUITECRM_ADMIN_PASSWORD: {{ .Values.suiteCRM.adminPassword | quote }}
+    SUITECRM_ADMIN_USER: {{ .Values.suiteCRM.adminUsername | quote }}
+    SUITECRM_CONFIG_LOC: {{ .Values.suiteCRM.config.configLoc | quote }}
+    SUITECRM_DEFAULT_CURRENCY_ISO4217: {{ .Values.suiteCRM.config.defaultCurrencyIso4217 | quote }}
+    SUITECRM_DEFAULT_CURRENCY_NAME: {{ .Values.suiteCRM.config.defaultCurrencyName | quote }}
+    SUITECRM_DEFAULT_CURRENCY_SIGNIFICANT_DIGITS: {{ .Values.suiteCRM.config.defaultCurrencySignificantDigits | quote }}
+    SUITECRM_DEFAULT_CURRENCY_SYMBOL: {{ .Values.suiteCRM.config.defaultCurrencySymbol | quote }}
+    SUITECRM_DEFAULT_DATE_FORMAT: {{ .Values.suiteCRM.config.defaultDateFormat | quote }}
+    SUITECRM_DEFAULT_DECIMAL_SEPERATOR: {{ .Values.suiteCRM.config.defaultDecimalSeperator | quote }}
+    SUITECRM_DEFAULT_EXPORT_CHARSET: {{ .Values.suiteCRM.config.defaultExportCharset | quote }}
+    SUITECRM_DEFAULT_LANGUAGE: {{ .Values.suiteCRM.config.defaultLanguage | quote }} 
+    SUITECRM_DEFAULT_LOCALE_NAME_FORMAT: {{ .Values.suiteCRM.config.defaultLocaleNameFormat | quote }}
+    SUITECRM_DEFAULT_NUMBER_GROUPING_SEPARATOR: {{ .Values.suiteCRM.config.defaultNumberGroupingSeparator | quote }}
+    SUITECRM_DEFAULT_TIME_FORMAT: {{ .Values.suiteCRM.config.defaultTimeFormat | quote }}
+    SUITECRM_EXPORT_DELIMITER: {{ .Values.suiteCRM.config.exportDelimiter | quote }}
+    SUITECRM_HOSTNAME: {{ .Values.suiteCRM.config.hostname | quote }}
+    SUITECRM_INSTALL_DIR: {{ .Values.suiteCRM.config.installDir | quote }}
+    SUITECRM_SETUP_CREATE_DATABASE: {{ .Values.suiteCRM.config.setupCreateDatabase | quote }}
+    SUITECRM_SETUP_DEMO_DATA: {{ .Values.suiteCRM.config.setupDemoData | quote }}
+    SUITECRM_SITE_NAME: {{ .Values.suiteCRM.siteName | quote }}
+    SUITECRM_SITE_URL: {{ .Values.suiteCRM.siteUrl | quote }}
