@@ -3,22 +3,22 @@ kind: ConfigMap
 metadata:
     name: {{ include "suitecrm7.shortname" . }}-configs
     labels:
-        {{- include "suitecrm7.labels" . | nindent 4 }}
+        {{ include "suitecrm7.labels" . | nindent 8 }}
         component: deployment
 data:
     SUITECRM_DATABASE_COLLATION: {{ .Values.suiteCRM.config.databaseCollation | quote }}
     SUITECRM_DATABASE_DROP_TABLES: {{ .Values.suiteCRM.config.databaseDropTables | quote }}
-    SUITECRM_DATABASE_HOST_INSTANCE: "SQLEXPRESS"
+    SUITECRM_DATABASE_HOST_INSTANCE: {{ .Values.suiteCRM.config.databaseHostInstance | quote }}
     {{ if eq .Values.db.type "internal" }}
     SUITECRM_DATABASE_HOST: "localhost"
-    SUITECRM_DATABASE_NAME: {{ .Values.db.internal_db.databaseName | quote }}
-    SUITECRM_DATABASE_PASSWORD: {{ .Values.db.internal_db.databasePassword | quote }}
-    SUITECRM_DATABASE_PORT: {{- .Values.db.internal_db.databasePort -}}
+    SUITECRM_DATABASE_NAME: {{ .Values.db.internal_db.databaseName | default "suitecrm" | quote }}
+    SUITECRM_DATABASE_PASSWORD: {{ .Values.db.internal_db.databasePassword | default "changeme" | quote }}
+    SUITECRM_DATABASE_PORT: {{ .Values.db.internal_db.databasePort | default "3306" | quote }}
     SUITECRM_DATABASE_TYPE: "mysql"
     SUITECRM_DATABASE_USE_SSL: false
     SUITECRM_DATABASE_USER_IS_PRIVILEGED: false
-    SUITECRM_DATABASE_USER: {{ .Values.db.internal_db.databaseUser}}
-    {{- else if eq .Values.db.type "external" -}}
+    SUITECRM_DATABASE_USER: {{ .Values.db.internal_db.databaseUser | default "suitecrm" | quote }}
+    {{ else if eq .Values.db.type "external" }}
     SUITECRM_DATABASE_HOST: {{ .Values.db.external_db.databaseHost | quote }}
     SUITECRM_DATABASE_NAME: {{ .Values.db.external_db.databaseName | quote }}
     SUITECRM_DATABASE_PASSWORD: {{ .Values.db.external_db.databasePassword | quote }}
@@ -27,7 +27,7 @@ data:
     SUITECRM_DATABASE_USE_SSL: {{ .Values.db.external_db.databaseUseSsl | quote }}
     SUITECRM_DATABASE_USER_IS_PRIVILEGED: {{ .Values.db.external_db.databaseUserIsPrivileged | quote }}
     SUITECRM_DATABASE_USER: {{ .Values.db.external_db.databaseUser | quote }}
-    {{- else -}}
+    {{ end }}
     
     SUITECRM_ADMIN_PASSWORD: {{ .Values.suiteCRM.adminPassword | quote }}
     SUITECRM_ADMIN_USER: {{ .Values.suiteCRM.adminUsername | quote }}
