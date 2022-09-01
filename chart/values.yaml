@@ -127,6 +127,7 @@ service:
 
 ingress:
   enabled: false
+  enableTLS: false # If this is false, no tls setting below has any effect.
   className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
@@ -136,11 +137,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
+      tls: 
+        enabled: false
+        secretName: chart-example-tls
+        
 
 
 autoscaling:
