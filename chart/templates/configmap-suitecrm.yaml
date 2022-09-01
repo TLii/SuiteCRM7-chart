@@ -28,9 +28,12 @@ data:
     SUITECRM_DATABASE_USER_IS_PRIVILEGED: {{ .Values.db.external_db.databaseUserIsPrivileged | quote }}
     SUITECRM_DATABASE_USER: {{ .Values.db.external_db.databaseUser | quote }}
     {{ end }}
-    
+    {{ if .Values.suiteCRM.adminPassword }}
     SUITECRM_ADMIN_PASSWORD: {{ .Values.suiteCRM.adminPassword | quote }}
+    {{ end }}
+    {{ if .Values.suiteCRM.adminUsername }}
     SUITECRM_ADMIN_USER: {{ .Values.suiteCRM.adminUsername | quote }}
+    {{ end }}
     SUITECRM_CONFIG_LOC: {{ .Values.suiteCRM.config.configLoc | quote }}
     SUITECRM_DEFAULT_CURRENCY_ISO4217: {{ .Values.suiteCRM.config.defaultCurrencyIso4217 | quote }}
     SUITECRM_DEFAULT_CURRENCY_NAME: {{ .Values.suiteCRM.config.defaultCurrencyName | quote }}
