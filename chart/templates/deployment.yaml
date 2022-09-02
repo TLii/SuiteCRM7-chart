@@ -33,6 +33,9 @@ spec:
       containers:
         {{ if .Values.php.enabled }}
         - name: php
+          envFrom:
+          - configMapRef:
+              name: {{ include "suitecrm7.shortname" . }}-suitecrm_configs
           env:
             - name: DATABASE_NAME
               valueFrom:
@@ -124,7 +127,7 @@ spec:
         {{ if eq .Values.db.type "internal" }}
         - name: db
           env: 
-            {{ if .Values.db.internal_db.databasePassword }}
+            {{ if .Values.db.internal_db.mariadbRootPassword }}
             - name: MARIADB_ROOT_PASSWORD 
               value: {{ .Values.db.internal_db.mariadbRootPassword | quote }}
             {{ else }}
@@ -132,11 +135,23 @@ spec:
               value: 'yes'
             {{ end }}
             - name: MARIADB_DATABASE
-              value: {{ .Values.db.internal_db.databaseName | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_name
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: MARIADB_USER
-              value: {{ .Values.db.internal_db.databaseUser | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_user
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: MARIADB_PASSWORD
-              value: {{ .Values.db.internal_db.databasePassword | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_password
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: MARIADB_AUTO_UPGRADE
               value: {{ .Values.db.internal_db.mariadbAutoUpgrade | quote }}
           securityContext:
