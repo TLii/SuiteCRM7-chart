@@ -22,8 +22,8 @@ suiteCRM:
   siteName: SuiteCRM
   siteUrl: "example.com" # Add correct site url.
   enableDemoData: true # Any non-null value will cause demo data to be installed.
-  adminUsername: # If left null, a random username is used and printed to stdout. These are initial values; changing them after installation has no effect.
-  adminPassword: # If left null, a random password is used and printed to stdout.
+  adminUsername: suitecrm_admin
+  adminPassword: changemeASAP
   config:
     configLoc: /docker-configs
     databaseCollation: utf8_general_ci 
