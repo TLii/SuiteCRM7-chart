@@ -34,33 +34,43 @@ spec:
         {{ if .Values.php.enabled }}
         - name: php
           env:
-            {{ if eq .Values.db.type "internal" }}
             - name: DATABASE_NAME
-              value: {{ .Values.db.internal_db.database_name  | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_name
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: DATABASE_USER
-              value: {{ .Values.db.internal_db.database_user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_user
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: DATABASE_PASSWORD 
-              value: {{ .Values.db.internal_db.database_password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_password
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
+            {{ if eq .Values.db.type "internal" }}
             - name: DATABASE_SERVER
               value: "localhost"
             {{ else if eq .Values.db.type "external" }}
-            - name: DATABASE_NAME
-              value: {{ .Values.db.external_db.database_name | quote }}
-            - name: DATABASE_USER
-              value: {{ .Values.db.external_db.database_user | quote }}
-            - name: DATABASE_PASSWORD
-              value: {{ .Values.db.external_db.database_password | quote }}
             - name: DATABASE_SERVER
               value: {{ .Values.db.external_db.database_host | default "localhost" | quote }}
             {{ end }}
-            {{ if .Values.suiteCRM.adminUsername }}
             - name: ADMIN_USER
-              value: {{ .Values.suiteCRM.adminUsername }}
-            {{ end }}
-            {{ if .Values.suiteCRM.adminPassword }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_password
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: ADMIN_PASSWORD
-              value: {{ .Values.suiteCRM.adminPassword }}
-            {{ end }}
+              valueFrom:
+                secretKeyRef:
+                  key: database_password
+                  name: {{ include "suitecrm7.shortname" $ }}-credentials
+                  optional: false
             - name: SUITECRM_SITEURL
               value: {{ .Values.suiteCRM.siteUrl }}
             {{ if .Values.suiteCRM.enableDemoData }}
@@ -114,21 +124,21 @@ spec:
         {{ if eq .Values.db.type "internal" }}
         - name: db
           env: 
-            {{ if .Values.db.internal_db.database_password }}
+            {{ if .Values.db.internal_db.databasePassword }}
             - name: MARIADB_ROOT_PASSWORD 
-              value: {{ .Values.db.internal_db.mariadb_root_password | quote }}
+              value: {{ .Values.db.internal_db.mariadbRootPassword | quote }}
             {{ else }}
             - name: MARIADB_RANDOM_ROOT_PASSWORD 
               value: 'yes'
             {{ end }}
             - name: MARIADB_DATABASE
-              value: {{ .Values.db.internal_db.database_name | quote }}
+              value: {{ .Values.db.internal_db.databaseName | quote }}
             - name: MARIADB_USER
-              value: {{ .Values.db.internal_db.database_user | quote }}
+              value: {{ .Values.db.internal_db.databaseUser | quote }}
             - name: MARIADB_PASSWORD
-              value: {{ .Values.db.internal_db.database_password | quote }}
+              value: {{ .Values.db.internal_db.databasePassword | quote }}
             - name: MARIADB_AUTO_UPGRADE
-              value: {{ .Values.db.internal_db.mariadb_auto_upgrade | quote}}
+              value: {{ .Values.db.internal_db.mariadbAutoUpgrade | quote }}
           securityContext:
             {{ toYaml .Values.db.internal_db.securityContext | nindent 12 }}
           image: {{ .Values.db.internal_db.image }}:{{ .Values.db.internal_db.tag | default .Chart.AppVersion }}
